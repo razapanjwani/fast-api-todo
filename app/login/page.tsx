@@ -5,10 +5,12 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { URL } from "@/utils/utils"
 import { mySetCookie } from "@/utils/authhelper"
+import ErrorBlock from "../component/errorblock"
 const LoginPage = () => {
     const router = useRouter()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loginError, setLoginError] = useState("")
     const logIn = async () => {
         const formData = new URLSearchParams();
 
@@ -28,16 +30,21 @@ const LoginPage = () => {
                 await mySetCookie(data.access_token, data.refresh_token)
                 router.refresh()
                 router.push("/")
+                setLoginError("")
             }
-
+            console.log(data, "datajson");
+            if (res.status == 401) {
+                setLoginError(data.detail)
+            }
         }
         catch (error) {
-            console.log(error);
+            console.log(error.message, "error");
+            console.log("error is error");
         }
     }
     return (
         <>
-            <section className="bg-gray-50 dark:bg-gray-900">
+            <section className="bg-gray-50 dark:bg-gray-900 relative">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto  ">
 
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -58,6 +65,7 @@ const LoginPage = () => {
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                     Don’t have an account yet? <Link href="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</Link>
                                 </p>
+                                {loginError && <ErrorBlock error={loginError} />}
                             </form>
                         </div>
                     </div>

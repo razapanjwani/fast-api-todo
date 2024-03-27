@@ -3,20 +3,23 @@ from typing import Optional
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from .crud.crud import TodoCrud,UserCrud
-from .database.database import get_db,Base,engine
+from .database.database import get_db,engine
 from starlette import status
 from sqlalchemy.orm import Session
 from .validation.validation import TodoCreate,TodoUpdate,TodoResponse,UserCreate,UserResponse,Token
 from .auth.service import service_signup_users,authenticate_user,get_current_user,create_access_token,create_refresh_token,token_service
 from .model.model import *
 from fastapi.responses import JSONResponse
-
+from sqlmodel import SQLModel
 app:FastAPI = FastAPI(docs_url="/docs",debug=True)
 
 todocrud = TodoCrud()
 usercrud = UserCrud()
+SQLModel.metadata.create_all(bind=engine)
 
-Base.metadata.create_all(bind=engine)
+@app.get("/")
+def main_hello():
+    return {"message":"hello world"}
 
 @app.get("/api/todos", response_model=list[TodoResponse])
 def get_todos(db:Session = Depends(get_db),user = Depends(get_current_user)):
@@ -56,7 +59,7 @@ def login_user(form_data:OAuth2PasswordRequestForm = Depends() ,db:Session = Dep
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token_expires = timedelta(minutes=1)
+    access_token_expires = timedelta(minutes=15)
     access_token = create_access_token(
         data={"sub": user.user_name}, expires_delta=access_token_expires
     )

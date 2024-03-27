@@ -219,7 +219,7 @@ const Todo = () => {
         if (hasCookie("access_token")) {
             getTodos();
         }
-    },[]); // Empty dependency array means this effect runs once when the component mounts
+    }, []); // Empty dependency array means this effect runs once when the component mounts
 
 
     return (
@@ -249,8 +249,8 @@ const Todo = () => {
                     {todos && todos.map((todo, index) => {
                         return (
                             <>
-                                <ul key={index} className="flex flex-col">
-                                    <TodoBlock todo={todo} deleteFunc={deleteTodo} updateFunc={setShowModal} updateId={setMyId} />
+                                <ul className="flex flex-col">
+                                    <TodoBlock key={index} todo={todo} deleteFunc={deleteTodo} updateFunc={setShowModal} updateId={setMyId} />
                                 </ul>
 
                             </>

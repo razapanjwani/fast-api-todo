@@ -1,19 +1,21 @@
 "use client"
 import Image from "next/image"
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { URL } from "../../utils/utils"
 import { useRouter } from 'next/navigation'
+import { myDelCookie } from "@/utils/authhelper";
 
 const SignUpPage = () => {
+
     const router = useRouter()
     const [email, setEmail] = useState("")
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const signUp = async () => {
+        await myDelCookie()
         try {
             if (password === confirmPassword) {
                 const res = await fetch(`${URL}/api/signup`, {
@@ -31,7 +33,6 @@ const SignUpPage = () => {
                     router.push("/login")
                 }
             } else {
-                toast.error('🦄 Wow so easy!');
             }
         } catch (error) {
             console.log(error, "error");

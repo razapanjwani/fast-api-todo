@@ -1,5 +1,4 @@
-from pydantic import BaseModel,EmailStr
-
+from pydantic import EmailStr,BaseModel
 from uuid import UUID
 from datetime import timedelta
 
@@ -12,10 +11,10 @@ class TodoUpdate(BaseModel):
     description:str
 
 class TodoResponse(BaseModel):
-    id:UUID
+    id:int
     title:str
-    description:str
-    user_id:UUID
+    description:str 
+    user_id:int
 
 class UserCreate(BaseModel):
     user_name:str
@@ -23,7 +22,7 @@ class UserCreate(BaseModel):
     hashed_password:str
 
 class UserResponse(BaseModel):
-    id:UUID | int
+    id:int
     email:EmailStr
     
 
