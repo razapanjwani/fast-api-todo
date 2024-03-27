@@ -8,7 +8,7 @@ from jose import jwt,JWTError
 from ..database.database import get_db
 from ..database.database import SessionLocal
 from ..model.model import User
-from sqlalchemy.orm import Session
+from sqlmodel import Session,select
 from ..validation.validation import UserCreate
 from ..utils.helper import get_password_hash
 from dotenv import load_dotenv ,find_dotenv
@@ -23,7 +23,7 @@ ouath2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def db_signup_user(user_data:UserCreate,db:Session):
-    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    existing_user = db.exec(select(User).where(User.email == user_data.email)).first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="User already exists")
     hashed_password = get_password_hash(user_data.hashed_password)
@@ -40,8 +40,7 @@ def  get_user(db:Session,user_name:str):
     if user_name is None:
         raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,headers={"WWW-Authenticate": 'Bearer'},detail={"error": "invalid_token", "error_description": "The access token expired"})
 
-    user = db.query(User).filter(User.user_name == user_name).first()
-
+    user = db.exec(select(User).where(User.user_name == user_name)).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
     return user
@@ -50,7 +49,7 @@ def get_user_by_id(db:Session,user_id:int):
     if user_id is None:
         raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,headers={"WWW-Authenticate": 'Bearer'},detail={"error": "invalid_token", "error_description": "The access token expired"})
 
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.exec(select(User).where(User.id == user_id)).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
@@ -60,7 +59,7 @@ def get_user_by_email(db:Session,email:str):
     if email is None:
         raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,headers={"WWW-Authenticate": 'Bearer'},detail={"error": "invalid_token", "error_description": "The access token expired"})
 
-    user = db.query(User).filter(User.email == email).first()
+    user = db.exec(select(User).where(User.email == email)).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
