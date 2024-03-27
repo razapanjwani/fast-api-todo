@@ -2,7 +2,7 @@ from fastapi import FastAPI,Depends,HTTPException,Form,Body
 from typing import Optional
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
-from .crud.crud import TodoCrud,UserCrud
+from .crud.crud import TodoCrud
 from .database.database import get_db,engine
 from starlette import status
 from sqlalchemy.orm import Session
@@ -11,11 +11,12 @@ from .auth.service import service_signup_users,authenticate_user,get_current_use
 from .model.model import *
 from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel
+from typing import Annotated    
 app:FastAPI = FastAPI(docs_url="/docs",debug=True)
 
 todocrud = TodoCrud()
-usercrud = UserCrud()
 SQLModel.metadata.create_all(bind=engine)
+
 
 @app.get("/")
 def main_hello():
